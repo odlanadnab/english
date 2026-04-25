@@ -1,0 +1,244 @@
+
+<h2 class="sr-only">Scatter plot comparing protein and carbohydrate content of McDonald's menu items available in Bangkok vs Jakarta, color-coded by food category.</h2>
+
+<style>
+  .tooltip {
+    position: absolute;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 14px;
+    font-size: 13px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 10;
+    max-width: 200px;
+    line-height: 1.5;
+    color: var(--color-text-primary);
+  }
+  .filter-btn {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn.active {
+    color: var(--color-text-primary);
+    background: var(--color-background-secondary);
+    border-color: var(--color-border-primary);
+    font-weight: 500;
+  }
+</style>
+
+<div style="padding: 1rem 0 0.5rem;">
+  <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 4px;">
+    <div>
+      <p style="font-size: 11px; color: var(--color-text-tertiary); margin: 0 0 8px;">
+        * Bangkok-exclusive items marked with estimated values from public nutrition databases. Hover each dot for details.
+      </p>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; align-items: center;">
+    <span style="font-size: 12px; color: var(--color-text-secondary);">Filter by city:</span>
+    <button class="filter-btn active" id="btn-all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" id="btn-shared" onclick="setFilter('shared')">Shared menu</button>
+    <button class="filter-btn" id="btn-bangkok" onclick="setFilter('bangkok')">Bangkok-exclusive</button>
+    <button class="filter-btn" id="btn-jakarta" onclick="setFilter('jakarta')">Jakarta-exclusive</button>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; font-size: 12px; color: var(--color-text-secondary);">
+    <span style="font-weight: 500; color: var(--color-text-primary);">Shape = city availability:</span>
+    <span style="display: flex; align-items: center; gap: 6px;">
+      <svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#378ADD" opacity="0.8"/></svg>Both cities
+    </span>
+    <span style="display: flex; align-items: center; gap: 6px;">
+      <svg width="14" height="14"><polygon points="7,1 13,13 1,13" fill="#D85A30" opacity="0.85"/></svg>Bangkok only
+    </span>
+    <span style="display: flex; align-items: center; gap: 6px;">
+      <svg width="14" height="14"><rect x="1" y="1" width="12" height="12" fill="#1D9E75" opacity="0.85"/></svg>Jakarta only
+    </span>
+  </div>
+
+  <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; font-size: 12px; color: var(--color-text-secondary);">
+    <span style="font-weight: 500; color: var(--color-text-primary);">Color = category:</span>
+    <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;display:inline-block;"></span>Burgers</span>
+    <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px;height:10px;border-radius:2px;background:#D85A30;display:inline-block;"></span>Chicken</span>
+    <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>Rice dishes</span>
+    <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px;height:10px;border-radius:2px;background:#7F77DD;display:inline-block;"></span>Fish</span>
+    <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px;height:10px;border-radius:2px;background:#BA7517;display:inline-block;"></span>Sides/Snacks</span>
+    <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px;height:10px;border-radius:2px;background:#D4537E;display:inline-block;"></span>Breakfast</span>
+  </div>
+
+  <div style="position: relative; width: 100%; height: 420px;">
+    <canvas id="scatterChart" role="img" aria-label="Scatter plot of McDonald's menu items comparing protein (x-axis) vs carbohydrates (y-axis) in grams, differentiating Bangkok and Jakarta availability.">Items plotted by protein and carbohydrate content in grams.</canvas>
+  </div>
+
+  <div id="tooltip" class="tooltip"></div>
+
+  <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+    <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 16px;">
+      <p style="font-size: 11px; color: var(--color-text-secondary); margin: 0 0 4px;">Highest protein (both cities)</p>
+      <p style="font-size: 15px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Double Big Mac</p>
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">28g protein</p>
+    </div>
+    <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 16px;">
+      <p style="font-size: 11px; color: var(--color-text-secondary); margin: 0 0 4px;">Highest carbs (Bangkok-exclusive)</p>
+      <p style="font-size: 15px; font-weight: 500; margin: 0; color: var(--color-text-primary);">Kaprao Rice</p>
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">~72g carbs</p>
+    </div>
+    <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 16px;">
+      <p style="font-size: 11px; color: var(--color-text-secondary); margin: 0 0 4px;">Best protein/carb ratio</p>
+      <p style="font-size: 15px; font-weight: 500; margin: 0; color: var(--color-text-primary);">McNuggets (6 pc)</p>
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0;">15g P / 15g C</p>
+    </div>
+  </div>
+
+  <p style="font-size: 11px; color: var(--color-text-tertiary); margin-top: 12px; line-height: 1.5;">
+    Sources: McDonald's global nutrition data, McDonald's Thailand (mcdonalds.co.th), McDonald's Indonesia regional data, and public nutrition databases (Nutritionix, USDA cross-reference). Bangkok-exclusive items (Samurai Pork, Kaprao Rice, McSpicy BKK, Porridge) use estimated values.
+  </p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const COLORS = {
+  burger: '#378ADD',
+  chicken: '#D85A30',
+  rice: '#1D9E75',
+  fish: '#7F77DD',
+  sides: '#BA7517',
+  breakfast: '#D4537E',
+};
+
+const items = [
+  { name: 'Big Mac', protein: 25, carbs: 45, cat: 'burger', city: 'both', note: 'Classic beef burger' },
+  { name: 'Double Big Mac', protein: 28, carbs: 44, cat: 'burger', city: 'both', note: 'Double-patty version' },
+  { name: 'McChicken', protein: 15, carbs: 41, cat: 'chicken', city: 'both', note: 'Crispy chicken sandwich' },
+  { name: 'Cheeseburger', protein: 15, carbs: 33, cat: 'burger', city: 'both', note: 'Classic cheeseburger' },
+  { name: 'Double Cheeseburger', protein: 22, carbs: 34, cat: 'burger', city: 'both', note: 'Double patty cheeseburger' },
+  { name: 'Filet-O-Fish', protein: 15, carbs: 39, cat: 'fish', city: 'both', note: 'Fish fillet sandwich' },
+  { name: 'McNuggets (6 pc)', protein: 15, carbs: 15, cat: 'chicken', city: 'both', note: 'Crispy chicken nuggets' },
+  { name: 'McNuggets (10 pc)', protein: 25, carbs: 25, cat: 'chicken', city: 'both', note: 'Larger nuggets portion' },
+  { name: 'French Fries (M)', protein: 4, carbs: 44, cat: 'sides', city: 'both', note: 'Medium fries' },
+  { name: 'French Fries (L)', protein: 6, carbs: 65, cat: 'sides', city: 'both', note: 'Large fries' },
+  { name: 'Egg McMuffin', protein: 17, carbs: 30, cat: 'breakfast', city: 'both', note: 'Breakfast muffin with egg' },
+  { name: 'Sausage McMuffin w/ Egg', protein: 21, carbs: 30, cat: 'breakfast', city: 'both', note: 'Breakfast sandwich' },
+
+  { name: 'Samurai Pork Burger*', protein: 18, carbs: 38, cat: 'burger', city: 'bangkok', note: 'Bangkok: pork patty, Thai spices. Estimated.' },
+  { name: 'McSpicy (Bangkok)*', protein: 22, carbs: 46, cat: 'chicken', city: 'bangkok', note: 'Bangkok: spicy chicken burger. Estimated.' },
+  { name: 'Kaprao Rice*', protein: 20, carbs: 72, cat: 'rice', city: 'bangkok', note: 'Bangkok: stir-fried basil rice with pork. Estimated.' },
+  { name: 'McD Porridge*', protein: 8, carbs: 38, cat: 'breakfast', city: 'bangkok', note: 'Bangkok: rice porridge breakfast. Estimated.' },
+  { name: 'McWings (4 pc)*', protein: 18, carbs: 12, cat: 'chicken', city: 'bangkok', note: 'Bangkok: chicken wings. Estimated.' },
+  { name: 'Chic Stick*', protein: 8, carbs: 14, cat: 'chicken', city: 'bangkok', note: 'Bangkok: chicken stick snack. Estimated.' },
+
+  { name: 'McSpicy (Jakarta)', protein: 21, carbs: 43, cat: 'chicken', city: 'jakarta', note: 'Jakarta: spicy crispy chicken burger' },
+  { name: 'Beef Burger (Jakarta)', protein: 12, carbs: 28, cat: 'burger', city: 'jakarta', note: 'Jakarta: basic beef burger patty' },
+  { name: 'Spicy Rice (Jakarta)', protein: 12, carbs: 79, cat: 'rice', city: 'jakarta', note: 'Jakarta: rice with spicy pork/chicken' },
+  { name: 'Cheesy Rice (Jakarta)', protein: 12, carbs: 71, cat: 'rice', city: 'jakarta', note: 'Jakarta: rice with cheese sauce' },
+];
+
+const cityColors = { both: '#378ADD', bangkok: '#D85A30', jakarta: '#1D9E75' };
+
+function getShape(city) {
+  return city === 'both' ? 'circle' : city === 'bangkok' ? 'triangle' : 'rect';
+}
+
+function makeDatasets(filterCity) {
+  const catMap = {};
+  items.forEach(it => {
+    if (filterCity !== 'all') {
+      if (filterCity === 'shared' && it.city !== 'both') return;
+      if (filterCity === 'bangkok' && it.city !== 'bangkok') return;
+      if (filterCity === 'jakarta' && it.city !== 'jakarta') return;
+    }
+    if (!catMap[it.cat]) catMap[it.cat] = [];
+    catMap[it.cat].push(it);
+  });
+
+  return Object.entries(catMap).map(([cat, pts]) => ({
+    label: cat,
+    data: pts.map(it => ({x: it.protein, y: it.carbs, item: it})),
+    backgroundColor: pts.map(it => cityColors[it.city] + 'CC'),
+    borderColor: pts.map(it => cityColors[it.city]),
+    borderWidth: 1.5,
+    pointStyle: pts.map(it => getShape(it.city)),
+    pointRadius: 9,
+    pointHoverRadius: 12,
+  }));
+}
+
+let chart;
+let currentFilter = 'all';
+
+function setFilter(f) {
+  currentFilter = f;
+  ['all','shared','bangkok','jakarta'].forEach(id => {
+    document.getElementById('btn-' + id).classList.toggle('active', id === f);
+  });
+  chart.data.datasets = makeDatasets(f);
+  chart.update();
+}
+
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+const tickColor = isDark ? '#888' : '#777';
+
+chart = new Chart(document.getElementById('scatterChart'), {
+  type: 'scatter',
+  data: { datasets: makeDatasets('all') },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { enabled: false },
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Protein (g)', color: tickColor, font: { size: 13 } },
+        min: 0, max: 35,
+        grid: { color: gridColor },
+        ticks: { color: tickColor, stepSize: 5 },
+      },
+      y: {
+        title: { display: true, text: 'Carbohydrates (g)', color: tickColor, font: { size: 13 } },
+        min: 0, max: 90,
+        grid: { color: gridColor },
+        ticks: { color: tickColor, stepSize: 10 },
+      }
+    },
+    onHover: (event, elements) => {
+      const tip = document.getElementById('tooltip');
+      if (!elements.length) { tip.style.opacity = 0; return; }
+      const el = elements[0];
+      const ds = chart.data.datasets[el.datasetIndex];
+      const pt = ds.data[el.index];
+      const it = pt.item;
+      const cityLabel = it.city === 'both' ? 'Bangkok & Jakarta' : it.city === 'bangkok' ? 'Bangkok only' : 'Jakarta only';
+      tip.innerHTML = `<strong style="color:var(--color-text-primary)">${it.name}</strong><br>
+        <span style="color:var(--color-text-secondary);font-size:12px;">${it.note}</span><br>
+        <span style="margin-top:6px;display:block;font-size:12px;">
+          Protein: <strong>${it.protein}g</strong> &nbsp; Carbs: <strong>${it.carbs}g</strong>
+        </span>
+        <span style="display:inline-block;margin-top:4px;font-size:11px;padding:2px 8px;border-radius:99px;background:${cityColors[it.city]}22;color:${cityColors[it.city]}">${cityLabel}</span>`;
+      const rect = document.getElementById('scatterChart').getBoundingClientRect();
+      const containerRect = tip.parentElement.getBoundingClientRect();
+      let left = event.native.clientX - containerRect.left + 16;
+      let top = event.native.clientY - containerRect.top - 20;
+      if (left + 210 > containerRect.width) left -= 220;
+      tip.style.left = left + 'px';
+      tip.style.top = top + 'px';
+      tip.style.opacity = 1;
+    }
+  }
+});
+
+document.getElementById('scatterChart').addEventListener('mouseleave', () => {
+  document.getElementById('tooltip').style.opacity = 0;
+});
+</script>
