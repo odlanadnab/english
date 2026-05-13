@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel English — Speaking & Writing Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0EA5A0;
+    --teal-light: #E0F7F6;
+    --teal-dark: #097A76;
+    --amber: #F59E0B;
+    --amber-light: #FEF3C7;
+    --blue: #3B82F6;
+    --blue-light: #EFF6FF;
+    --coral: #F43F5E;
+    --coral-light: #FFF1F2;
+    --purple: #8B5CF6;
+    --purple-light: #F5F3FF;
+    --green: #10B981;
+    --green-light: #ECFDF5;
+    --bg: #F8F9FB;
+    --white: #FFFFFF;
+    --text: #1E293B;
+    --text-mid: #475569;
+    --text-light: #94A3B8;
+    --border: #E2E8F0;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; min-height: 100vh; }
+  h1,h2,h3,.display { font-family: 'Nunito', sans-serif; }
+
+  .site-header { background: var(--teal); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 68px; box-shadow: 0 2px 12px rgba(14,165,160,0.18); }
+  .site-logo { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 800; color: white; }
+  .site-logo span { color: var(--amber); }
+  .mode-tabs { display: flex; gap: 6px; }
+  .mode-tab { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; padding: 8px 20px; border-radius: 999px; border: 2px solid rgba(255,255,255,0.35); background: transparent; color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.2s; }
+  .mode-tab:hover { background: rgba(255,255,255,0.15); color: white; }
+  .mode-tab.active { background: white; color: var(--teal-dark); border-color: white; }
+
+  .main { max-width: 820px; margin: 0 auto; padding: 36px 24px 60px; }
+
+  .phase-progress { display: flex; align-items: center; margin-bottom: 32px; }
+  .phase-step { display: flex; align-items: center; gap: 8px; }
+  .phase-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; background: var(--border); color: var(--text-light); flex-shrink: 0; transition: all 0.3s; }
+  .phase-dot.active { background: var(--teal); color: white; box-shadow: 0 0 0 4px var(--teal-light); }
+  .phase-dot.done { background: var(--green); color: white; }
+  .phase-step-label { font-size: 14px; font-weight: 600; color: var(--text-light); transition: color 0.3s; }
+  .phase-step-label.active { color: var(--teal-dark); }
+  .phase-step-label.done { color: var(--green); }
+  .phase-line { height: 3px; flex: 1; background: var(--border); margin: 0 10px; border-radius: 2px; transition: background 0.3s; }
+  .phase-line.done { background: var(--green); }
+
+  .card { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--border); padding: 28px 32px; margin-bottom: 20px; }
+  .card-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .card-sub { font-size: 16px; color: var(--text-mid); margin-bottom: 20px; line-height: 1.5; }
+
+  .theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .theme-card { background: var(--white); border: 2px solid var(--border); border-radius: var(--radius); padding: 18px 12px; cursor: pointer; text-align: center; transition: all 0.18s; }
+  .theme-card:hover { border-color: var(--teal); background: var(--teal-light); transform: translateY(-2px); }
+  .theme-card.selected { border-color: var(--teal); background: var(--teal-light); box-shadow: 0 0 0 3px var(--teal-light); }
+  .theme-emoji { font-size: 36px; display: block; margin-bottom: 10px; }
+  .theme-name { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .theme-hint { font-size: 13px; color: var(--text-mid); }
+
+  .fac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .fac-item { background: var(--white); border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.15s; font-size: 15px; font-weight: 600; color: var(--text); }
+  .fac-item:hover { border-color: var(--teal); background: var(--teal-light); }
+  .fac-item.selected { border-color: var(--teal); background: var(--teal-light); }
+  .fac-item.disabled { opacity: 0.35; pointer-events: none; }
+  .fac-check { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; transition: all 0.15s; }
+  .fac-item.selected .fac-check { background: var(--teal); border-color: var(--teal); color: white; }
+
+  .budget-wrap { margin-bottom: 20px; }
+  .budget-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; color: var(--text-mid); margin-bottom: 8px; }
+  .budget-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .budget-fill { height: 100%; border-radius: 4px; background: var(--teal); transition: width 0.3s, background 0.3s; }
+  .budget-fill.warn { background: var(--amber); }
+  .budget-fill.over { background: var(--coral); }
+
+  .rules-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .rule-row { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .rule-text { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; min-width: 160px; }
+  .rule-toggle { display: flex; border-radius: 999px; overflow: hidden; border: 2px solid var(--border); flex-shrink: 0; }
+  .rule-toggle button { font-size: 14px; font-weight: 700; padding: 6px 16px; background: transparent; border: none; cursor: pointer; color: var(--text-mid); transition: all 0.15s; font-family: 'Nunito', sans-serif; }
+  .rule-toggle button.active-allow { background: var(--green-light); color: #065F46; }
+  .rule-toggle button.active-prohibit { background: var(--coral-light); color: #9F1239; }
+
+  .hotel-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; padding: 8px 16px; border-radius: 999px; border: 2px solid var(--teal); background: var(--teal-light); color: var(--teal-dark); }
+  .role-tag { font-size: 15px; font-weight: 700; padding: 8px 16px; border-radius: 999px; border: 2px solid; }
+  .role-guest { background: var(--blue-light); color: #1D4ED8; border-color: #93C5FD; }
+  .role-recep { background: var(--purple-light); color: #6D28D9; border-color: #C4B5FD; }
+
+  .scenario-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .scenario-text { font-size: 17px; color: var(--text); line-height: 1.65; margin-bottom: 16px; font-weight: 600; }
+  .vocab-hint { font-size: 15px; color: var(--text-mid); line-height: 1.6; padding: 14px 18px; background: var(--green-light); border-radius: var(--radius-sm); border-left: 4px solid var(--green); }
+  .vocab-hint strong { color: #065F46; }
+
+  .hotel-summary { background: var(--bg); border-radius: var(--radius-sm); padding: 14px 18px; margin-bottom: 20px; border: 1.5px solid var(--border); }
+  .summary-label { font-size: 13px; font-weight: 700; color: var(--text-mid); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { font-size: 14px; font-weight: 600; padding: 5px 14px; border-radius: 999px; background: var(--white); border: 1.5px solid var(--border); color: var(--text-mid); }
+
+  .write-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .write-label { font-size: 16px; font-weight: 700; color: var(--text); }
+  .word-count { font-size: 15px; font-weight: 600; color: var(--text-light); }
+  textarea { width: 100%; min-height: 160px; resize: vertical; font-family: 'Nunito Sans', sans-serif; font-size: 16px; line-height: 1.65; padding: 16px; color: var(--text); border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--white); transition: border-color 0.2s; }
+  textarea:focus { outline: none; border-color: var(--teal); }
+
+  .name-input { width: 100%; padding: 13px 16px; font-family: 'Nunito Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text); border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--white); transition: border-color 0.2s; margin-bottom: 16px; }
+  .name-input:focus { outline: none; border-color: var(--teal); }
+  .name-label { font-size: 15px; font-weight: 700; color: var(--text-mid); margin-bottom: 8px; display: block; }
+
+  .submit-success { background: var(--green-light); border: 2px solid var(--green); border-radius: var(--radius-sm); padding: 16px 20px; font-size: 16px; font-weight: 600; color: #065F46; margin-top: 16px; display: none; }
+
+  .btn-primary { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; background: var(--teal); color: white; border: none; padding: 13px 28px; border-radius: 999px; cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(14,165,160,0.25); }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; background: var(--white); color: var(--text-mid); border: 2px solid var(--border); padding: 12px 24px; border-radius: 999px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--teal-dark); background: var(--teal-light); }
+  .btn-amber { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; background: var(--amber); color: #1C1917; border: none; padding: 13px 28px; border-radius: 999px; cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-amber:hover { background: #D97706; transform: translateY(-1px); }
+  .btn-send { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; background: #2563EB; color: white; border: none; padding: 13px 28px; border-radius: 999px; cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+  .btn-send:hover { background: #1D4ED8; transform: translateY(-1px); }
+  .btn-send:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 20px; }
+
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .setup-field label { display: block; font-size: 15px; font-weight: 700; color: var(--text-mid); margin-bottom: 8px; }
+  select { width: 100%; padding: 12px 14px; font-family: 'Nunito Sans', sans-serif; font-size: 16px; font-weight: 600; color: var(--text); border: 2px solid var(--border); border-radius: var(--radius-sm); background: var(--white); cursor: pointer; transition: border-color 0.2s; }
+  select:focus { outline: none; border-color: var(--teal); }
+
+  .mode-panel { display: none; }
+  .mode-panel.active { display: block; }
+  .section-divider { height: 2px; background: var(--border); border-radius: 2px; margin: 24px 0; }
+  .section-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light); margin-bottom: 12px; }
+
+  @media (max-width: 600px) {
+    .site-header { padding: 0 16px; }
+    .main { padding: 24px 16px 48px; }
+    .card { padding: 20px 18px; }
+    .setup-grid { grid-template-columns: 1fr; }
+    .mode-tab { font-size: 14px; padding: 7px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-logo">Hotel<span>English</span></div>
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="switchMode('speaking')" id="tab-speaking">🎤 Speaking</button>
+    <button class="mode-tab" onclick="switchMode('writing')" id="tab-writing">✍️ Writing</button>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- ===== SPEAKING MODE ===== -->
+  <div class="mode-panel active" id="mode-speaking">
+
+    <div class="phase-progress">
+      <div class="phase-step">
+        <div class="phase-dot active" id="sd1">1</div>
+        <span class="phase-step-label active" id="sl1">Choose theme</span>
+      </div>
+      <div class="phase-line" id="sline1"></div>
+      <div class="phase-step">
+        <div class="phase-dot" id="sd2">2</div>
+        <span class="phase-step-label" id="sl2">Build your hotel</span>
+      </div>
+      <div class="phase-line" id="sline2"></div>
+      <div class="phase-step">
+        <div class="phase-dot" id="sd3">3</div>
+        <span class="phase-step-label" id="sl3">Roleplay</span>
+      </div>
+    </div>
+
+    <!-- Phase 1: Choose theme -->
+    <div id="sphase1">
+      <div class="card">
+        <div class="card-title">Choose your hotel theme</div>
+        <div class="card-sub">Pick the hotel you want to own. Your theme shapes your facilities, rules, and the guests you welcome.</div>
+        <div class="theme-grid">
+          <div class="theme-card" data-theme="luxury" onclick="selectSpeakTheme(this)">
+            <span class="theme-emoji">🏨</span>
+            <div class="theme-name">Luxury Spa Resort</div>
+            <div class="theme-hint">5-star, high-end guests</div>
+          </div>
+          <div class="theme-card" data-theme="backpacker" onclick="selectSpeakTheme(this)">
+            <span class="theme-emoji">🎒</span>
+            <div class="theme-name">Budget Backpacker Hostel</div>
+            <div class="theme-hint">Social, budget travelers</div>
+          </div>
+          <div class="theme-card" data-theme="eco" onclick="selectSpeakTheme(this)">
+            <span class="theme-emoji">🌿</span>
+            <div class="theme-name">Eco Nature Lodge</div>
+            <div class="theme-hint">Sustainable, outdoor guests</div>
+          </div>
+          <div class="theme-card" data-theme="business" onclick="selectSpeakTheme(this)">
+            <span class="theme-emoji">💼</span>
+            <div class="theme-name">Business Hotel</div>
+            <div class="theme-hint">Corporate, efficiency-focused</div>
+          </div>
+          <div class="theme-card" data-theme="heritage" onclick="selectSpeakTheme(this)">
+            <span class="theme-emoji">🏛️</span>
+            <div class="theme-name">Boutique Heritage Hotel</div>
+            <div class="theme-hint">Cultural, artisan experience</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" id="speakThemeBtn" onclick="goSpeakPhase(2)" disabled>Confirm theme →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2: Build hotel -->
+    <div id="sphase2" style="display:none;">
+      <div class="card">
+        <div class="card-title">Build your hotel</div>
+        <div class="card-sub">Choose up to 6 facilities and set your house rules. You need at least 3 facilities and all rules answered to continue.</div>
+        <div id="hotelBanner" style="margin-bottom:20px;"></div>
+        <div class="section-label">Facilities — pick up to 6</div>
+        <div class="budget-wrap">
+          <div class="budget-row"><span>Selected</span><span id="facCount">0 / 6</span></div>
+          <div class="budget-track"><div class="budget-fill" id="facBar" style="width:0%"></div></div>
+        </div>
+        <div class="fac-grid" id="facilityGrid"></div>
+        <div class="section-divider"></div>
+        <div class="section-label">House rules — allowed or prohibited?</div>
+        <div class="rules-list" id="rulesList"></div>
+        <div class="btn-row">
+          <button class="btn-secondary" onclick="goSpeakPhase(1)">← Back</button>
+          <button class="btn-primary" id="sphase2Btn" onclick="goSpeakPhase(3)" disabled>Continue to roleplay →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3: Roleplay -->
+    <div id="sphase3" style="display:none;">
+      <div class="card">
+        <div class="card-title">Speaking roleplay</div>
+        <div class="card-sub">Read your scenario. Speak your response aloud with your partner. Use your hotel's vocabulary and rules.</div>
+        <div id="speakHotelSummary"></div>
+        <div id="speakScenarioArea"></div>
+        <div class="btn-row">
+          <button class="btn-secondary" onclick="goSpeakPhase(2)">← Back</button>
+          <button class="btn-primary" onclick="newSpeakScenario()">🔁 New scenario</button>
+          <button class="btn-secondary" onclick="switchMode('writing')">Try written version →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== WRITING MODE ===== -->
+  <div class="mode-panel" id="mode-writing">
+
+    <!-- Setup -->
+    <div id="writeSetup">
+      <div class="card">
+        <div class="card-title">Writing activity</div>
+        <div class="card-sub">Choose your hotel theme and role, then write your response and send it to your teacher.</div>
+        <div class="setup-grid">
+          <div class="setup-field">
+            <label>Hotel theme</label>
+            <select id="writeTheme">
+              <option value="luxury">🏨 Luxury Spa Resort</option>
+              <option value="backpacker">🎒 Budget Backpacker Hostel</option>
+              <option value="eco">🌿 Eco Nature Lodge</option>
+              <option value="business">💼 Business Hotel</option>
+              <option value="heritage">🏛️ Boutique Heritage Hotel</option>
+            </select>
+          </div>
+          <div class="setup-field">
+            <label>Your role</label>
+            <select id="writeRole">
+              <option value="random">🎲 Random</option>
+              <option value="guest">🧳 Guest</option>
+              <option value="receptionist">🛎️ Receptionist</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-amber" onclick="startWriting()">Start writing activity →</button>
+      </div>
+    </div>
+
+    <!-- Activity -->
+    <div id="writeActivity" style="display:none;">
+
+      <div class="card">
+        <div class="scenario-header" id="writeScenarioHeader"></div>
+        <div class="scenario-text" id="writeScenarioText"></div>
+        <div class="vocab-hint" id="writeVocabHint"></div>
+        <div class="btn-row" style="margin-top:16px;">
+          <button class="btn-secondary" onclick="newWriteScenario()">🔁 New scenario</button>
+          <button class="btn-secondary" onclick="resetWriting()">← Change setup</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <label class="name-label">Your name</label>
+        <input class="name-input" id="studentName" type="text" placeholder="Enter your full name" oninput="checkWriteReady()">
+        <div class="write-label-row">
+          <span class="write-label">Your response</span>
+          <span class="word-count" id="writeWordCount">0 words</span>
+        </div>
+        <textarea id="writeBox" placeholder="Write your response here. Aim for at least 50 words." oninput="updateWriteCount()"></textarea>
+        <div class="btn-row">
+          <button class="btn-send" id="writeSendBtn" onclick="sendToTeacher()" disabled>📧 Send to teacher</button>
+          <button class="btn-secondary" id="writeCopyBtn" onclick="copyResponse()">📋 Copy response</button>
+        </div>
+        <div class="submit-success" id="submitSuccess">✅ Your email app should have opened! Hit Send to submit your response to your teacher.</div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<script>
+const TEACHER_EMAIL = "officialaldobandan@gmail.com";
+
+const themes = {
+  luxury:     { name: "Luxury Spa Resort",       emoji: "🏨", color: "#0EA5A0", bg: "#E0F7F6", textColor: "#097A76" },
+  backpacker: { name: "Budget Backpacker Hostel", emoji: "🎒", color: "#3B82F6", bg: "#EFF6FF", textColor: "#1D4ED8" },
+  eco:        { name: "Eco Nature Lodge",          emoji: "🌿", color: "#10B981", bg: "#ECFDF5", textColor: "#065F46" },
+  business:   { name: "Business Hotel",            emoji: "💼", color: "#F59E0B", bg: "#FEF3C7", textColor: "#92400E" },
+  heritage:   { name: "Boutique Heritage Hotel",   emoji: "🏛️", color: "#F43F5E", bg: "#FFF1F2", textColor: "#9F1239" }
+};
+
+const allFacilities = {
+  luxury:     ["Swimming pool","Spa & wellness center","Fine dining restaurant","Concierge service","Airport shuttle","Butler service","Rooftop bar","Fitness center","Valet parking","Sauna"],
+  backpacker: ["Shared dormitory","Common room","Luggage storage","Free Wi-Fi","Laundry service","Tour desk","Communal kitchen","Bike rental","Reading lounge","Lockers"],
+  eco:        ["Nature trails","Organic restaurant","Solar panels","Birdwatching tours","Recycling station","Rainwater harvesting","Hammock garden","Eco-library","Wildlife guide","Composting area"],
+  business:   ["Conference rooms","Business center","Express check-in","24hr room service","Printing service","Meeting packages","Airport transfer","Co-working lounge","Mini bar","Dry cleaning"],
+  heritage:   ["Museum-style lobby","Local craft shop","Cultural tours","Heritage library","Traditional dining","Guided city walks","Art gallery","Antique furnishings","Tea lounge","Photography studio"]
+};
+
+const ruleItems = [
+  { text: "Guests bring a large dog" },
+  { text: "Smoking in guest rooms" },
+  { text: "Late checkout (after 12pm)" },
+  { text: "Outside food in dining area" },
+  { text: "Visitors after midnight" },
+  { text: "Children under 5 in main facilities" }
+];
+
+const speakScenarios = {
+  luxury: [
+    { role:"guest", text:"You arrive at the resort. Your booking shows a deluxe room, but you'd like to upgrade to a suite. Ask the receptionist about available room types and what each upgrade includes.", hint:"Use: suite, ocean view, complimentary, upgrade fee, amenities" },
+    { role:"receptionist", text:"A guest is checking in but their reservation can't be found in the system. Stay calm, apologise professionally, and offer two solutions.", hint:"Use: I sincerely apologise, let me check, alternative arrangement, complimentary" },
+    { role:"guest", text:"Your room isn't ready on arrival. Ask when it will be ready and which facilities you can use in the meantime.", hint:"Use: estimated time, spa access, waiting lounge, complimentary, check-in time" }
+  ],
+  backpacker: [
+    { role:"guest", text:"You're checking into the hostel and want a mixed dorm bed. You're unsure how the locker system works — ask for a full explanation.", hint:"Use: dormitory, locker, padlock, key deposit, valuables, bunk bed" },
+    { role:"receptionist", text:"A new guest looks confused and overwhelmed. Welcome them warmly, explain the check-in, and give them two practical tips.", hint:"Use: house rules, common room, curfew, checkout time, wristband" },
+    { role:"guest", text:"You want to extend your stay by one night on a tight budget. Negotiate with the receptionist and mention what you won't need.", hint:"Use: extend my stay, availability, reduced rate, budget, basic facilities" }
+  ],
+  eco: [
+    { role:"guest", text:"You're excited about your first morning. Ask the front desk about tomorrow's wildlife tours: what's available, departure time, and what to bring.", hint:"Use: guided tour, departure time, equipment, sturdy footwear, what's included" },
+    { role:"receptionist", text:"A guest asks why the eco-lodge costs more than a regular hotel. Explain three eco-friendly features and why they matter.", hint:"Use: sustainable, solar-powered, locally sourced, carbon footprint, community benefit" },
+    { role:"guest", text:"You'd like to book the organic restaurant for dinner for two. Ask about menu options, dietary needs, and closing time.", hint:"Use: reservation, vegetarian, locally grown, closing time, special request" }
+  ],
+  business: [
+    { role:"guest", text:"You need a conference room tomorrow, 9–11am, for 8 people. Ask about available equipment, catering, and cost.", hint:"Use: projector, whiteboard, catering, meeting package, capacity, audiovisual" },
+    { role:"receptionist", text:"A business guest needs an urgent printout before their 7am meeting — it's currently midnight. Explain what services are available.", hint:"Use: business centre, 24-hour, surcharge, available upon request, front desk" },
+    { role:"guest", text:"Your flight was delayed and you won't arrive until midnight. Call the hotel to arrange late check-in and ask about early breakfast.", hint:"Use: late arrival, hold my reservation, guarantee check-in, early breakfast, estimated arrival" }
+  ],
+  heritage: [
+    { role:"guest", text:"You want to book a guided heritage city tour but aren't sure what's included or how long it takes. Ask for full details.", hint:"Use: itinerary, duration, historical sites, what's covered, group size" },
+    { role:"receptionist", text:"A guest complains their antique room 'looks old'. Acknowledge the concern, explain the heritage value, and offer an alternative.", hint:"Use: authentic, carefully restored, historical significance, we appreciate your feedback" },
+    { role:"guest", text:"You'd like a courtyard-view room for your anniversary. Request it and ask the receptionist about the history of the building.", hint:"Use: courtyard view, special occasion, architecture, established in, historical background" }
+  ]
+};
+
+const writeScenarios = {
+  luxury: [
+    { role:"guest", text:"You have just arrived at the Luxury Spa Resort. You booked a deluxe room but would like to upgrade to a suite. Write your request to the receptionist, asking about available room types, what the upgrade includes, and the cost.", hint:"Use: suite, ocean view, complimentary, upgrade fee, amenities, adjoining rooms" },
+    { role:"receptionist", text:"A guest is checking in but their reservation cannot be found in the system. Write your response: apologise professionally, explain the situation clearly, and offer two solutions.", hint:"Use: I sincerely apologise, let me check, I would be happy to offer, alternative arrangement, complimentary" },
+    { role:"guest", text:"You arrive at the Luxury Spa Resort but your room is not ready. Write a message to the front desk asking when it will be available and what facilities you can use in the meantime.", hint:"Use: estimated time, spa access, lounge, complimentary, waiting period, check-in time" }
+  ],
+  backpacker: [
+    { role:"guest", text:"You are checking into the Budget Backpacker Hostel. You want a mixed dormitory bed but are unsure how the locker system works. Write your enquiry asking for a clear explanation.", hint:"Use: dormitory, locker, padlock, key deposit, valuables, bunk bed, shared bathroom" },
+    { role:"receptionist", text:"A new guest arrives looking confused and overwhelmed. Write your welcome message: greet them warmly, explain the check-in, and give two useful tips.", hint:"Use: welcome aboard, house rules, common room, curfew, checkout time, wristband" },
+    { role:"guest", text:"You want to extend your stay by one night on a tight budget. Write to the receptionist to negotiate a discounted rate and mention which facilities you won't use.", hint:"Use: extend my stay, availability, reduced rate, budget constraints, basic facilities" }
+  ],
+  eco: [
+    { role:"guest", text:"You are excited about the Eco Nature Lodge. Write a message asking about tomorrow's wildlife tours: what is available, departure time, and what you need to bring.", hint:"Use: guided tour, departure time, what is included, equipment, sturdy footwear, insect repellent" },
+    { role:"receptionist", text:"A guest asks why the eco-lodge is more expensive than a regular hotel. Write your response explaining three eco-friendly features and why they are worth it.", hint:"Use: sustainable, solar-powered, locally sourced, carbon footprint, community benefit, organic" },
+    { role:"guest", text:"You would like to book the organic restaurant for dinner tonight for two. Write your reservation request and ask about vegetarian options and closing time.", hint:"Use: reservation, dietary requirement, vegetarian, locally grown, closing time, special request" }
+  ],
+  business: [
+    { role:"guest", text:"You need to book a conference room for tomorrow morning, 9am to 11am, for 8 people. Write your request asking about available equipment, catering options, and the total cost.", hint:"Use: projector, whiteboard, catering, meeting package, capacity, audiovisual equipment, invoice" },
+    { role:"receptionist", text:"A business guest needs an urgent printout before their 7am meeting and it is currently midnight. Write your response explaining what services are available at this hour.", hint:"Use: business centre, 24-hour service, available upon request, surcharge, front desk assistance" },
+    { role:"guest", text:"Your flight was delayed and you won't arrive until midnight. Write an email to arrange a late check-in and ask about early breakfast options.", hint:"Use: late arrival, hold my reservation, guarantee check-in, early breakfast, estimated arrival time" }
+  ],
+  heritage: [
+    { role:"guest", text:"You want to book a guided heritage tour of the city but are unsure what is included or how long it takes. Write your full enquiry asking for complete details.", hint:"Use: itinerary, duration, historical sites, what is covered, group size, departure point" },
+    { role:"receptionist", text:"A guest complains the antique furnishings in their room look old and uncomfortable. Write your response: acknowledge the concern, explain the heritage value, and offer a solution.", hint:"Use: authentic, carefully restored, historical significance, we appreciate your feedback, alternative arrangement" },
+    { role:"guest", text:"You would like a room with a courtyard view for your anniversary stay. Write your request and ask the receptionist to share some history about the building.", hint:"Use: courtyard view, special occasion, architecture, established in, could you tell me, historical background" }
+  ]
+};
+
+let currentSpeakTheme = null;
+let selectedFacs = [];
+let rules = {};
+let currentSpeakPhase = 1;
+let currentSpeakScenario = null;
+let currentWriteTheme = null;
+let currentWriteScenario = null;
+
+function switchMode(mode) {
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('mode-' + mode).classList.add('active');
+  document.getElementById('tab-' + mode).classList.add('active');
+}
+
+// SPEAKING
+function selectSpeakTheme(card) {
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  currentSpeakTheme = card.dataset.theme;
+  document.getElementById('speakThemeBtn').disabled = false;
+}
+
+function goSpeakPhase(n) {
+  document.getElementById('sphase' + currentSpeakPhase).style.display = 'none';
+  currentSpeakPhase = n;
+  document.getElementById('sphase' + n).style.display = '';
+  [1,2,3].forEach(i => {
+    const dot = document.getElementById('sd'+i);
+    const lbl = document.getElementById('sl'+i);
+    dot.className = 'phase-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+    lbl.className = 'phase-step-label' + (i < n ? ' done' : i === n ? ' active' : '');
+    dot.textContent = i < n ? '✓' : i;
+  });
+  document.getElementById('sline1').className = 'phase-line' + (n > 1 ? ' done' : '');
+  document.getElementById('sline2').className = 'phase-line' + (n > 2 ? ' done' : '');
+  if (n === 2) buildPhase2();
+  if (n === 3) buildPhase3();
+}
+
+function buildPhase2() {
+  const t = themes[currentSpeakTheme];
+  document.getElementById('hotelBanner').innerHTML = `<div style="display:inline-flex;align-items:center;gap:10px;background:${t.bg};border-radius:999px;padding:10px 20px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:${t.textColor};border:2px solid ${t.color}">${t.emoji} ${t.name}</div>`;
+  selectedFacs = [];
+  const grid = document.getElementById('facilityGrid');
+  grid.innerHTML = '';
+  allFacilities[currentSpeakTheme].forEach(f => {
+    const d = document.createElement('div');
+    d.className = 'fac-item';
+    d.innerHTML = `<div class="fac-check"></div><span>${f}</span>`;
+    d.onclick = () => toggleFac(d, f);
+    grid.appendChild(d);
+  });
+  rules = {};
+  const list = document.getElementById('rulesList');
+  list.innerHTML = '';
+  ruleItems.forEach((r, i) => {
+    rules[i] = null;
+    const row = document.createElement('div');
+    row.className = 'rule-row';
+    row.innerHTML = `<span class="rule-text">${r.text}</span>
+      <div class="rule-toggle">
+        <button id="ra${i}" onclick="setRule(${i},'allow',this)">✅ Allowed</button>
+        <button id="rp${i}" onclick="setRule(${i},'prohibit',this)">🚫 Prohibited</button>
+      </div>`;
+    list.appendChild(row);
+  });
+  checkPhase2();
+}
+
+function toggleFac(div, name) {
+  if (div.classList.contains('selected')) {
+    div.classList.remove('selected');
+    div.querySelector('.fac-check').textContent = '';
+    selectedFacs = selectedFacs.filter(f => f !== name);
+  } else {
+    if (selectedFacs.length >= 6) return;
+    div.classList.add('selected');
+    div.querySelector('.fac-check').textContent = '✓';
+    selectedFacs.push(name);
+  }
+  const pct = (selectedFacs.length / 6) * 100;
+  document.getElementById('facBar').style.width = pct + '%';
+  document.getElementById('facBar').className = 'budget-fill' + (pct > 83 ? ' over' : pct > 60 ? ' warn' : '');
+  document.getElementById('facCount').textContent = selectedFacs.length + ' / 6';
+  document.querySelectorAll('#facilityGrid .fac-item:not(.selected)').forEach(d => {
+    d.classList.toggle('disabled', selectedFacs.length >= 6);
+  });
+  checkPhase2();
+}
+
+function setRule(i, val, btn) {
+  rules[i] = val;
+  document.getElementById('ra'+i).className = val === 'allow' ? 'active-allow' : '';
+  document.getElementById('rp'+i).className = val === 'prohibit' ? 'active-prohibit' : '';
+  checkPhase2();
+}
+
+function checkPhase2() {
+  const allSet = Object.values(rules).every(v => v !== null);
+  document.getElementById('sphase2Btn').disabled = !(allSet && selectedFacs.length >= 3);
+}
+
+function buildPhase3() {
+  const t = themes[currentSpeakTheme];
+  const prohibited = ruleItems.filter((_, i) => rules[i] === 'prohibit').map(r => r.text);
+  document.getElementById('speakHotelSummary').innerHTML = `
+    <div class="hotel-summary">
+      <div class="summary-label">Your hotel</div>
+      <div style="font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:${t.textColor};margin-bottom:10px;">${t.emoji} ${t.name}</div>
+      <div class="summary-label">Facilities</div>
+      <div class="pill-row" style="margin-bottom:${prohibited.length?'12px':'0'};">${selectedFacs.map(f=>`<span class="pill">${f}</span>`).join('')}</div>
+      ${prohibited.length ? `<div class="summary-label" style="margin-top:12px;">Prohibited</div><div class="pill-row">${prohibited.map(r=>`<span class="pill" style="border-color:#FCA5A5;color:#9F1239;background:#FFF1F2;">🚫 ${r}</span>`).join('')}</div>` : ''}
+    </div>`;
+  newSpeakScenario();
+}
+
+function newSpeakScenario() {
+  const pool = speakScenarios[currentSpeakTheme];
+  let pick;
+  do { pick = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && pick === currentSpeakScenario);
+  currentSpeakScenario = pick;
+  const isGuest = pick.role === 'guest';
+  document.getElementById('speakScenarioArea').innerHTML = `
+    <div style="background:var(--bg);border-radius:var(--radius);border:2px solid var(--border);padding:22px 24px;">
+      <div style="margin-bottom:14px;">
+        <span class="role-tag ${isGuest ? 'role-guest' : 'role-recep'}">${isGuest ? '🧳 Guest' : '🛎️ Receptionist'}</span>
+      </div>
+      <div class="scenario-text">${pick.text}</div>
+      <div class="vocab-hint"><strong>Vocabulary tip:</strong> ${pick.hint}</div>
+    </div>`;
+}
+
+// WRITING
+function startWriting() {
+  currentWriteTheme = document.getElementById('writeTheme').value;
+  document.getElementById('writeSetup').style.display = 'none';
+  document.getElementById('writeActivity').style.display = '';
+  newWriteScenario();
+}
+
+function resetWriting() {
+  document.getElementById('writeActivity').style.display = 'none';
+  document.getElementById('writeSetup').style.display = '';
+  document.getElementById('writeBox').value = '';
+  document.getElementById('studentName').value = '';
+  document.getElementById('submitSuccess').style.display = 'none';
+  updateWriteCount();
+}
+
+function newWriteScenario() {
+  currentWriteTheme = document.getElementById('writeTheme').value;
+  const roleChoice = document.getElementById('writeRole').value;
+  const pool = writeScenarios[currentWriteTheme];
+  let filtered = roleChoice === 'random' ? pool : pool.filter(s => s.role === roleChoice);
+  if (!filtered.length) filtered = pool;
+  let pick;
+  do { pick = filtered[Math.floor(Math.random() * filtered.length)]; } while (filtered.length > 1 && pick === currentWriteScenario);
+  currentWriteScenario = pick;
+  const t = themes[currentWriteTheme];
+  const isGuest = pick.role === 'guest';
+  document.getElementById('writeScenarioHeader').innerHTML = `
+    <span class="hotel-tag">${t.emoji} ${t.name}</span>
+    <span class="role-tag ${isGuest ? 'role-guest' : 'role-recep'}">${isGuest ? '🧳 Guest' : '🛎️ Receptionist'}</span>`;
+  document.getElementById('writeScenarioText').textContent = pick.text;
+  document.getElementById('writeVocabHint').innerHTML = `<strong>Vocabulary to use:</strong> ${pick.hint}`;
+  document.getElementById('writeBox').value = '';
+  document.getElementById('submitSuccess').style.display = 'none';
+  updateWriteCount();
+}
+
+function updateWriteCount() {
+  const words = document.getElementById('writeBox').value.trim().split(/\s+/).filter(w=>w).length;
+  document.getElementById('writeWordCount').textContent = words + ' words';
+  checkWriteReady();
+}
+
+function checkWriteReady() {
+  const words = document.getElementById('writeBox').value.trim().split(/\s+/).filter(w=>w).length;
+  const name = document.getElementById('studentName').value.trim();
+  document.getElementById('writeSendBtn').disabled = !(words >= 20 && name.length > 0);
+}
+
+function sendToTeacher() {
+  const name = document.getElementById('studentName').value.trim();
+  const response = document.getElementById('writeBox').value.trim();
+  const t = themes[currentWriteTheme];
+  const isGuest = currentWriteScenario.role === 'guest';
+  const subject = encodeURIComponent(`Hotel English — ${name}`);
+  const body = encodeURIComponent(
+    `Student: ${name}\n` +
+    `Hotel theme: ${t.name}\n` +
+    `Role: ${isGuest ? 'Guest' : 'Receptionist'}\n` +
+    `Scenario: ${currentWriteScenario.text}\n\n` +
+    `--- Response ---\n\n${response}`
+  );
+  window.location.href = `mailto:${TEACHER_EMAIL}?subject=${subject}&body=${body}`;
+  document.getElementById('submitSuccess').style.display = 'block';
+}
+
+function copyResponse() {
+  const name = document.getElementById('studentName').value.trim();
+  const response = document.getElementById('writeBox').value.trim();
+  const t = themes[currentWriteTheme];
+  const text = (name ? `Student: ${name}\n` : '') + `Hotel theme: ${t.name}\nRole: ${currentWriteScenario.role}\n\n${response}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('writeCopyBtn');
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy response', 2000);
+  });
+}
+</script>
+</body>
+</html>
