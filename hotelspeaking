@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hotel English — Speaking Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0EA5A0; --teal-light: #E0F7F6; --teal-dark: #097A76;
+    --amber: #F59E0B; --amber-light: #FEF3C7;
+    --blue-light: #EFF6FF; --coral-light: #FFF1F2;
+    --purple-light: #F5F3FF; --green: #10B981; --green-light: #ECFDF5;
+    --bg: #F8F9FB; --white: #FFFFFF;
+    --text: #1E293B; --text-mid: #475569; --text-light: #94A3B8;
+    --border: #E2E8F0; --radius: 14px; --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; min-height: 100vh; }
+  h1,h2,h3 { font-family: 'Nunito', sans-serif; }
+
+  /* HEADER */
+  .site-header { background: var(--teal); padding: 0 32px; display: flex; align-items: center; height: 68px; box-shadow: 0 2px 12px rgba(14,165,160,0.2); gap: 14px; }
+  .site-logo { font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 800; color: white; }
+  .site-logo span { color: var(--amber); }
+  .header-tag { font-size: 14px; font-weight: 700; background: rgba(255,255,255,0.18); color: white; padding: 5px 14px; border-radius: 999px; }
+
+  /* LAYOUT */
+  .main { max-width: 800px; margin: 0 auto; padding: 36px 24px 60px; }
+
+  /* PROGRESS */
+  .phase-progress { display: flex; align-items: center; margin-bottom: 32px; }
+  .phase-step { display: flex; align-items: center; gap: 8px; }
+  .phase-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 16px; background: var(--border); color: var(--text-light); flex-shrink: 0; transition: all 0.3s; }
+  .phase-dot.active { background: var(--teal); color: white; box-shadow: 0 0 0 4px var(--teal-light); }
+  .phase-dot.done { background: var(--green); color: white; }
+  .phase-step-label { font-size: 14px; font-weight: 700; color: var(--text-light); transition: color 0.3s; }
+  .phase-step-label.active { color: var(--teal-dark); }
+  .phase-step-label.done { color: var(--green); }
+  .phase-line { height: 3px; flex: 1; background: var(--border); margin: 0 10px; border-radius: 2px; transition: background 0.3s; }
+  .phase-line.done { background: var(--green); }
+
+  /* CARD */
+  .card { background: var(--white); border-radius: var(--radius); border: 1.5px solid var(--border); padding: 28px 32px; margin-bottom: 20px; }
+  .card-title { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .card-sub { font-size: 16px; color: var(--text-mid); margin-bottom: 22px; line-height: 1.55; }
+
+  /* THEME GRID */
+  .theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .theme-card { background: var(--white); border: 2px solid var(--border); border-radius: var(--radius); padding: 20px 12px; cursor: pointer; text-align: center; transition: all 0.18s; }
+  .theme-card:hover { border-color: var(--teal); background: var(--teal-light); transform: translateY(-2px); }
+  .theme-card.selected { border-color: var(--teal); background: var(--teal-light); box-shadow: 0 0 0 3px var(--teal-light); }
+  .theme-emoji { font-size: 38px; display: block; margin-bottom: 10px; }
+  .theme-name { font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+  .theme-hint { font-size: 13px; color: var(--text-mid); }
+
+  /* FACILITIES */
+  .section-label { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light); margin-bottom: 12px; }
+  .budget-wrap { margin-bottom: 16px; }
+  .budget-row { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; color: var(--text-mid); margin-bottom: 8px; }
+  .budget-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .budget-fill { height: 100%; border-radius: 4px; background: var(--teal); transition: width 0.3s, background 0.3s; }
+  .budget-fill.warn { background: var(--amber); }
+  .budget-fill.over { background: #F43F5E; }
+  .fac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .fac-item { background: var(--white); border: 2px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.15s; font-size: 15px; font-weight: 600; color: var(--text); }
+  .fac-item:hover { border-color: var(--teal); background: var(--teal-light); }
+  .fac-item.selected { border-color: var(--teal); background: var(--teal-light); }
+  .fac-item.disabled { opacity: 0.35; pointer-events: none; }
+  .fac-check { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; transition: all 0.15s; }
+  .fac-item.selected .fac-check { background: var(--teal); border-color: var(--teal); color: white; }
+
+  /* RULES */
+  .section-divider { height: 2px; background: var(--border); border-radius: 2px; margin: 24px 0; }
+  .rules-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .rule-row { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .rule-text { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; min-width: 160px; }
+  .rule-toggle { display: flex; border-radius: 999px; overflow: hidden; border: 2px solid var(--border); flex-shrink: 0; }
+  .rule-toggle button { font-size: 14px; font-weight: 700; padding: 6px 16px; background: transparent; border: none; cursor: pointer; color: var(--text-mid); transition: all 0.15s; font-family: 'Nunito', sans-serif; }
+  .rule-toggle button.active-allow { background: var(--green-light); color: #065F46; }
+  .rule-toggle button.active-prohibit { background: var(--coral-light); color: #9F1239; }
+
+  /* HOTEL SUMMARY */
+  .hotel-summary { background: var(--bg); border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 22px; border: 1.5px solid var(--border); }
+  .summary-hotel-name { font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 12px; }
+  .summary-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-light); margin-bottom: 8px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pill { font-size: 14px; font-weight: 600; padding: 5px 14px; border-radius: 999px; background: var(--white); border: 1.5px solid var(--border); color: var(--text-mid); }
+  .pill-prohibit { border-color: #FCA5A5; color: #9F1239; background: var(--coral-light); }
+
+  /* SCENARIO */
+  .scenario-box { background: var(--bg); border-radius: var(--radius); border: 2px solid var(--border); padding: 24px; margin-bottom: 0; }
+  .role-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; padding: 8px 18px; border-radius: 999px; border: 2px solid; margin-bottom: 16px; }
+  .role-guest { background: var(--blue-light); color: #1D4ED8; border-color: #93C5FD; }
+  .role-recep { background: var(--purple-light); color: #6D28D9; border-color: #C4B5FD; }
+  .scenario-text { font-size: 18px; color: var(--text); line-height: 1.65; margin-bottom: 18px; font-weight: 600; }
+  .vocab-hint { font-size: 15px; color: var(--text-mid); line-height: 1.6; padding: 14px 18px; background: var(--green-light); border-radius: var(--radius-sm); border-left: 4px solid var(--green); }
+  .vocab-hint strong { color: #065F46; font-weight: 700; }
+
+  /* BUTTONS */
+  .btn-primary { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; background: var(--teal); color: white; border: none; padding: 13px 28px; border-radius: 999px; cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(14,165,160,0.25); }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; background: var(--white); color: var(--text-mid); border: 2px solid var(--border); padding: 12px 24px; border-radius: 999px; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--teal-dark); background: var(--teal-light); }
+  .btn-amber { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 800; background: var(--amber); color: #1C1917; border: none; padding: 13px 28px; border-radius: 999px; cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-amber:hover { background: #D97706; transform: translateY(-1px); }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 22px; }
+
+  @media (max-width: 600px) {
+    .site-header { padding: 0 16px; }
+    .main { padding: 24px 16px 48px; }
+    .card { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-logo">Hotel<span>English</span></div>
+  <div class="header-tag">🎤 Speaking Activity</div>
+</header>
+
+<main class="main">
+
+  <!-- PROGRESS BAR -->
+  <div class="phase-progress">
+    <div class="phase-step">
+      <div class="phase-dot active" id="sd1">1</div>
+      <span class="phase-step-label active" id="sl1">Choose theme</span>
+    </div>
+    <div class="phase-line" id="sline1"></div>
+    <div class="phase-step">
+      <div class="phase-dot" id="sd2">2</div>
+      <span class="phase-step-label" id="sl2">Build your hotel</span>
+    </div>
+    <div class="phase-line" id="sline2"></div>
+    <div class="phase-step">
+      <div class="phase-dot" id="sd3">3</div>
+      <span class="phase-step-label" id="sl3">Roleplay</span>
+    </div>
+  </div>
+
+  <!-- PHASE 1: Choose theme -->
+  <div id="phase1">
+    <div class="card">
+      <div class="card-title">Choose your hotel theme</div>
+      <div class="card-sub">Pick the type of hotel you want to own. Your theme decides your facilities, rules, and the guests you welcome.</div>
+      <div class="theme-grid">
+        <div class="theme-card" data-theme="luxury" onclick="selectTheme(this)">
+          <span class="theme-emoji">🏨</span>
+          <div class="theme-name">Luxury Spa Resort</div>
+          <div class="theme-hint">5-star, high-end guests</div>
+        </div>
+        <div class="theme-card" data-theme="backpacker" onclick="selectTheme(this)">
+          <span class="theme-emoji">🎒</span>
+          <div class="theme-name">Budget Backpacker Hostel</div>
+          <div class="theme-hint">Social, budget travelers</div>
+        </div>
+        <div class="theme-card" data-theme="eco" onclick="selectTheme(this)">
+          <span class="theme-emoji">🌿</span>
+          <div class="theme-name">Eco Nature Lodge</div>
+          <div class="theme-hint">Sustainable, outdoor guests</div>
+        </div>
+        <div class="theme-card" data-theme="business" onclick="selectTheme(this)">
+          <span class="theme-emoji">💼</span>
+          <div class="theme-name">Business Hotel</div>
+          <div class="theme-hint">Corporate, efficiency-focused</div>
+        </div>
+        <div class="theme-card" data-theme="heritage" onclick="selectTheme(this)">
+          <span class="theme-emoji">🏛️</span>
+          <div class="theme-name">Boutique Heritage Hotel</div>
+          <div class="theme-hint">Cultural, artisan experience</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="themeBtn" onclick="goPhase(2)" disabled>Confirm theme →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2: Build hotel -->
+  <div id="phase2" style="display:none;">
+    <div class="card">
+      <div class="card-title">Build your hotel</div>
+      <div class="card-sub">Select at least 3 facilities (up to 6), then set your house rules. You must answer all rules to continue.</div>
+      <div id="hotelBanner" style="margin-bottom:20px;"></div>
+      <div class="section-label">Facilities — pick up to 6</div>
+      <div class="budget-wrap">
+        <div class="budget-row"><span>Selected</span><span id="facCount">0 / 6</span></div>
+        <div class="budget-track"><div class="budget-fill" id="facBar" style="width:0%"></div></div>
+      </div>
+      <div class="fac-grid" id="facilityGrid"></div>
+      <div class="section-divider"></div>
+      <div class="section-label">House rules — allowed or prohibited?</div>
+      <div class="rules-list" id="rulesList"></div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="goPhase(1)">← Back</button>
+        <button class="btn-primary" id="phase2Btn" onclick="goPhase(3)" disabled>Continue to roleplay →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3: Roleplay -->
+  <div id="phase3" style="display:none;">
+    <div class="card">
+      <div class="card-title">Speaking roleplay</div>
+      <div class="card-sub">Read your scenario. Speak your response aloud with your partner. Use your hotel's vocabulary and rules as a reference.</div>
+      <div id="hotelSummary"></div>
+      <div class="scenario-box" id="scenarioArea"></div>
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="goPhase(2)">← Back</button>
+        <button class="btn-amber" onclick="newScenario()">🔁 New scenario</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const themes = {
+  luxury:     { name:"Luxury Spa Resort",        emoji:"🏨", bg:"#E0F7F6", color:"#097A76", border:"#0EA5A0" },
+  backpacker: { name:"Budget Backpacker Hostel",  emoji:"🎒", bg:"#EFF6FF", color:"#1D4ED8", border:"#3B82F6" },
+  eco:        { name:"Eco Nature Lodge",           emoji:"🌿", bg:"#ECFDF5", color:"#065F46", border:"#10B981" },
+  business:   { name:"Business Hotel",             emoji:"💼", bg:"#FEF3C7", color:"#92400E", border:"#F59E0B" },
+  heritage:   { name:"Boutique Heritage Hotel",    emoji:"🏛️", bg:"#FFF1F2", color:"#9F1239", border:"#F43F5E" }
+};
+
+const allFacilities = {
+  luxury:     ["Swimming pool","Spa & wellness center","Fine dining restaurant","Concierge service","Airport shuttle","Butler service","Rooftop bar","Fitness center","Valet parking","Sauna"],
+  backpacker: ["Shared dormitory","Common room","Luggage storage","Free Wi-Fi","Laundry service","Tour desk","Communal kitchen","Bike rental","Reading lounge","Lockers"],
+  eco:        ["Nature trails","Organic restaurant","Solar panels","Birdwatching tours","Recycling station","Rainwater harvesting","Hammock garden","Eco-library","Wildlife guide","Composting area"],
+  business:   ["Conference rooms","Business center","Express check-in","24hr room service","Printing service","Meeting packages","Airport transfer","Co-working lounge","Mini bar","Dry cleaning"],
+  heritage:   ["Museum-style lobby","Local craft shop","Cultural tours","Heritage library","Traditional dining","Guided city walks","Art gallery","Antique furnishings","Tea lounge","Photography studio"]
+};
+
+const ruleItems = [
+  "Guests bring a large dog",
+  "Smoking in guest rooms",
+  "Late checkout (after 12pm)",
+  "Outside food in dining area",
+  "Visitors after midnight",
+  "Children under 5 in main facilities"
+];
+
+const scenarios = {
+  luxury: [
+    { role:"guest",        text:"You arrive at the resort. Your booking shows a deluxe room, but you'd like to upgrade to a suite. Ask the receptionist about available room types and what each upgrade includes.", hint:"suite, ocean view, complimentary, upgrade fee, amenities" },
+    { role:"receptionist", text:"A guest is checking in but their reservation can't be found in the system. Stay calm, apologise professionally, and offer two solutions to fix the problem.", hint:"I sincerely apologise, let me check, alternative arrangement, complimentary" },
+    { role:"guest",        text:"Your room isn't ready when you arrive. Ask the receptionist when it will be ready and which hotel facilities you can use while you wait.", hint:"estimated time, spa access, waiting lounge, complimentary, check-in time" }
+  ],
+  backpacker: [
+    { role:"guest",        text:"You're checking into the hostel and want a mixed dorm bed. You're unsure how the locker system works — ask the receptionist for a full explanation.", hint:"dormitory, locker, padlock, key deposit, valuables, bunk bed" },
+    { role:"receptionist", text:"A new guest arrives looking confused and overwhelmed. Welcome them warmly, explain the check-in process, and give them two practical tips about the hostel.", hint:"house rules, common room, curfew, checkout time, wristband" },
+    { role:"guest",        text:"You want to extend your stay by one night but you're on a tight budget. Negotiate a lower price with the receptionist and mention what facilities you won't be using.", hint:"extend my stay, availability, reduced rate, budget, basic facilities" }
+  ],
+  eco: [
+    { role:"guest",        text:"You're excited about your first morning at the lodge. Ask the front desk about tomorrow's wildlife tours — what's available, what time they leave, and what to bring.", hint:"guided tour, departure time, equipment, sturdy footwear, what's included" },
+    { role:"receptionist", text:"A guest asks why the eco-lodge costs more than a regular hotel. Explain three eco-friendly features of the lodge and why they are worth the price.", hint:"sustainable, solar-powered, locally sourced, carbon footprint, community benefit" },
+    { role:"guest",        text:"You'd like to book the organic restaurant for dinner tonight for two people. Ask about the menu, dietary options, and what time the kitchen closes.", hint:"reservation, vegetarian, locally grown, closing time, special request" }
+  ],
+  business: [
+    { role:"guest",        text:"You need to book a conference room for tomorrow morning, 9 to 11am, for 8 people. Ask the receptionist about available equipment, catering options, and the cost.", hint:"projector, whiteboard, catering, meeting package, capacity, audiovisual" },
+    { role:"receptionist", text:"A business guest urgently needs a printout before their 7am meeting. It is currently midnight. Explain clearly what services are available at this hour.", hint:"business centre, 24-hour, surcharge, available upon request, front desk" },
+    { role:"guest",        text:"Your flight was delayed and you won't arrive until midnight. Call the hotel to arrange a late check-in and ask about early breakfast options for the next morning.", hint:"late arrival, hold my reservation, guarantee check-in, early breakfast, estimated arrival" }
+  ],
+  heritage: [
+    { role:"guest",        text:"You want to book a guided heritage tour of the city but you're unsure what's included or how long it takes. Ask the receptionist for complete details.", hint:"itinerary, duration, historical sites, what's covered, group size" },
+    { role:"receptionist", text:"A guest complains that the antique furnishings in their room look old and uncomfortable. Acknowledge their concern, explain the heritage value, and offer an alternative.", hint:"authentic, carefully restored, historical significance, we appreciate your feedback" },
+    { role:"guest",        text:"You'd like a room with a view of the heritage courtyard for your anniversary stay. Make the request and ask the receptionist to tell you some history about the building.", hint:"courtyard view, special occasion, architecture, established in, historical background" }
+  ]
+};
+
+let currentTheme = null;
+let selectedFacs = [];
+let rules = {};
+let currentPhase = 1;
+let currentScenario = null;
+
+function selectTheme(card) {
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  currentTheme = card.dataset.theme;
+  document.getElementById('themeBtn').disabled = false;
+}
+
+function goPhase(n) {
+  document.getElementById('phase' + currentPhase).style.display = 'none';
+  currentPhase = n;
+  document.getElementById('phase' + n).style.display = '';
+  [1,2,3].forEach(i => {
+    const dot = document.getElementById('sd'+i);
+    const lbl = document.getElementById('sl'+i);
+    dot.className = 'phase-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+    lbl.className = 'phase-step-label' + (i < n ? ' done' : i === n ? ' active' : '');
+    dot.textContent = i < n ? '✓' : i;
+  });
+  document.getElementById('sline1').className = 'phase-line' + (n > 1 ? ' done' : '');
+  document.getElementById('sline2').className = 'phase-line' + (n > 2 ? ' done' : '');
+  if (n === 2) buildPhase2();
+  if (n === 3) buildPhase3();
+}
+
+function buildPhase2() {
+  const t = themes[currentTheme];
+  document.getElementById('hotelBanner').innerHTML = `<div style="display:inline-flex;align-items:center;gap:10px;background:${t.bg};border-radius:999px;padding:10px 20px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:${t.color};border:2px solid ${t.border}">${t.emoji} ${t.name}</div>`;
+  selectedFacs = [];
+  const grid = document.getElementById('facilityGrid');
+  grid.innerHTML = '';
+  allFacilities[currentTheme].forEach(f => {
+    const d = document.createElement('div');
+    d.className = 'fac-item';
+    d.innerHTML = `<div class="fac-check"></div><span>${f}</span>`;
+    d.onclick = () => toggleFac(d, f);
+    grid.appendChild(d);
+  });
+  rules = {};
+  const list = document.getElementById('rulesList');
+  list.innerHTML = '';
+  ruleItems.forEach((r, i) => {
+    rules[i] = null;
+    const row = document.createElement('div');
+    row.className = 'rule-row';
+    row.innerHTML = `<span class="rule-text">${r}</span>
+      <div class="rule-toggle">
+        <button id="ra${i}" onclick="setRule(${i},'allow',this)">✅ Allowed</button>
+        <button id="rp${i}" onclick="setRule(${i},'prohibit',this)">🚫 Prohibited</button>
+      </div>`;
+    list.appendChild(row);
+  });
+  checkPhase2();
+}
+
+function toggleFac(div, name) {
+  if (div.classList.contains('selected')) {
+    div.classList.remove('selected');
+    div.querySelector('.fac-check').textContent = '';
+    selectedFacs = selectedFacs.filter(f => f !== name);
+  } else {
+    if (selectedFacs.length >= 6) return;
+    div.classList.add('selected');
+    div.querySelector('.fac-check').textContent = '✓';
+    selectedFacs.push(name);
+  }
+  const pct = (selectedFacs.length / 6) * 100;
+  document.getElementById('facBar').style.width = pct + '%';
+  document.getElementById('facBar').className = 'budget-fill' + (pct > 83 ? ' over' : pct > 60 ? ' warn' : '');
+  document.getElementById('facCount').textContent = selectedFacs.length + ' / 6';
+  document.querySelectorAll('#facilityGrid .fac-item:not(.selected)').forEach(d => {
+    d.classList.toggle('disabled', selectedFacs.length >= 6);
+  });
+  checkPhase2();
+}
+
+function setRule(i, val) {
+  rules[i] = val;
+  document.getElementById('ra'+i).className = val === 'allow' ? 'active-allow' : '';
+  document.getElementById('rp'+i).className = val === 'prohibit' ? 'active-prohibit' : '';
+  checkPhase2();
+}
+
+function checkPhase2() {
+  const allSet = Object.values(rules).every(v => v !== null);
+  document.getElementById('phase2Btn').disabled = !(allSet && selectedFacs.length >= 3);
+}
+
+function buildPhase3() {
+  const t = themes[currentTheme];
+  const prohibited = ruleItems.filter((_, i) => rules[i] === 'prohibit');
+  const allowed = ruleItems.filter((_, i) => rules[i] === 'allow');
+  document.getElementById('hotelSummary').innerHTML = `
+    <div class="hotel-summary">
+      <div class="summary-hotel-name" style="color:${t.color}">${t.emoji} ${t.name}</div>
+      <div class="summary-label">Your facilities</div>
+      <div class="pill-row" style="margin-bottom:${prohibited.length ? '14px':'4px'};">
+        ${selectedFacs.map(f => `<span class="pill">${f}</span>`).join('')}
+      </div>
+      ${prohibited.length ? `
+        <div class="summary-label" style="margin-top:4px;">Prohibited in your hotel</div>
+        <div class="pill-row">
+          ${prohibited.map(r => `<span class="pill pill-prohibit">🚫 ${r}</span>`).join('')}
+        </div>` : ''}
+    </div>`;
+  newScenario();
+}
+
+function newScenario() {
+  const pool = scenarios[currentTheme];
+  let pick;
+  do { pick = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && pick === currentScenario);
+  currentScenario = pick;
+  const isGuest = pick.role === 'guest';
+  document.getElementById('scenarioArea').innerHTML = `
+    <span class="role-tag ${isGuest ? 'role-guest' : 'role-recep'}">${isGuest ? '🧳 You are the Guest' : '🛎️ You are the Receptionist'}</span>
+    <div class="scenario-text">${pick.text}</div>
+    <div class="vocab-hint"><strong>Vocabulary to use:</strong> ${pick.hint}</div>`;
+}
+</script>
+</body>
+</html>
