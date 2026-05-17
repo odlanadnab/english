@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C1 Emotion Explorer: Nuance & Context</title>
+    <style>
+        :root {
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --error: #c0392b;
+            --text: #333333;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card);
+            width: 100%;
+            max-width: 750px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            position: relative;
+        }
+
+        header { text-align: center; margin-bottom: 24px; }
+        h1 { font-size: 1.8rem; color: var(--primary); margin-bottom: 8px; }
+        .subtitle { color: var(--text-light); font-size: 0.95rem; }
+
+        .progress-container {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin: 16px 0 24px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .scenario-box {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-size: 1.05rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-btn {
+            background: var(--card);
+            border: 2px solid var(--border);
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 500;
+        }
+        .option-btn:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); }
+        .option-btn:disabled { cursor: default; opacity: 0.8; }
+        .option-btn.selected { border-color: var(--primary); background: #eef2f7; }
+        .option-btn.correct { border-color: var(--success); background: #e8f5e9; color: #1b5e20; }
+        .option-btn.incorrect { border-color: var(--error); background: #ffebee; color: #b71c1c; }
+
+        .feedback-panel {
+            background: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .feedback-title { font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feedback-correct .feedback-title { color: var(--success); }
+        .feedback-incorrect .feedback-title { color: var(--error); }
+        .feedback-text { font-size: 0.95rem; margin-bottom: 12px; }
+        .usage-tip { background: #fff8e1; padding: 10px; border-radius: 8px; font-size: 0.9rem; color: #5d4037; border-left: 3px solid #ffb300; }
+
+        .nav-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: #2980b9; }
+        .nav-btn:disabled { background: #bdc3c7; cursor: not-allowed; }
+
+        .summary-screen { text-align: center; display: none; }
+        .score-display { font-size: 2.5rem; font-weight: 700; color: var(--primary); margin: 16px 0; }
+        .vocab-list { text-align: left; background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0; max-height: 300px; overflow-y: auto; }
+        .vocab-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .vocab-word { font-weight: 700; color: var(--accent); }
+        .vocab-def { font-size: 0.9rem; color: var(--text-light); }
+
+        .hidden { display: none; }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            h1 { font-size: 1.5rem; }
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📘 Emotion Explorer: C1 Nuance & Context</h1>
+            <p class="subtitle">Choose the emotion that best captures the psychological & situational nuance.</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div id="gameArea">
+            <div class="scenario-box" id="scenarioText"></div>
+            <div class="options-grid" id="optionsGrid"></div>
+            
+            <div class="feedback-panel" id="feedbackPanel">
+                <div class="feedback-title" id="feedbackTitle"></div>
+                <div class="feedback-text" id="feedbackText"></div>
+                <div class="usage-tip" id="usageTip"></div>
+            </div>
+
+            <button class="nav-btn" id="nextBtn" disabled>Next Scenario →</button>
+        </div>
+
+        <div class="summary-screen" id="summaryScreen">
+            <h2>Activity Complete</h2>
+            <div class="score-display" id="finalScore"></div>
+            <p id="scoreMessage"></p>
+            
+            <h3 style="margin: 20px 0 10px;">📖 Vocabulary Recap</h3>
+            <div class="vocab-list" id="vocabList"></div>
+            
+            <button class="nav-btn" onclick="resetActivity()">🔄 Shuffle & Try Again</button>
+        </div>
+    </div>
+
+    <script>
+        // ================= DATA BANK (15 C1 Scenarios) =================
+        const scenarioBank = [
+            {
+                id: 1,
+                scenario: "After months of advocating for a policy change, you finally see it implemented. Yet, you notice unintended consequences affecting a vulnerable group. Your dominant feeling is...",
+                options: ["ambivalent", "elated", "resentful", "sanguine"],
+                correct: 0,
+                feedback: {
+                    correct: "You experience conflicting emotions: satisfaction from success, but concern over harm.",
+                    distractors: { "elated": "Ignores the negative impact described.", "resentful": "Implies bitterness toward others, not internal conflict.", "sanguine": "Means optimistically confident; contradicts the concern." }
+                },
+                usage: "Collocates with: deeply/torn/feel ambivalent about. Often used in ethical or professional dilemmas.",
+                note: "C1 Focus: Mixed emotions vs. single-valence feelings"
+            },
+            {
+                id: 2,
+                scenario: "Your colleague repeatedly takes credit for your ideas in meetings. Rather than confronting them publicly, you feel a quiet, simmering...",
+                options: ["indignation", "exasperation", "bewilderment", "apprehension"],
+                correct: 1,
+                feedback: {
+                    correct: "Exasperation captures intense, restrained irritation from repeated frustrating behavior.",
+                    distractors: { "indignation": "Implies moral outrage, usually more outward and righteous.", "bewilderment": "Means confusion, not irritation.", "apprehension": "Refers to anxiety about future outcomes." }
+                },
+                usage: "Often paired with: simmering/growing/silent exasperation. Common in workplace dynamics.",
+                note: "C1 Focus: Intensity & social restraint"
+            },
+            {
+                id: 3,
+                scenario: "After years living abroad, you return home. The streets are familiar, yet everything feels subtly altered, evoking a bittersweet sense of...",
+                options: ["nostalgia", "wistfulness", "melancholy", "alienation"],
+                correct: 1,
+                feedback: {
+                    correct: "Wistfulness implies a gentle, reflective longing tinged with the awareness that things have changed.",
+                    distractors: { "nostalgia": "Generally warm/positive; lacks the bittersweet tension.", "melancholy": "Deeper, more persistent sadness.", "alienation": "Suggests disconnection, not reflective longing." }
+                },
+                usage: "Collocates with: a touch/sense/smile of wistfulness. Literary & psychological register.",
+                note: "C1 Focus: Subtle emotional shades"
+            },
+            {
+                id: 4,
+                scenario: "You’re about to deliver a keynote to 500 experts. As you step to the podium, your palms sweat and your heart races, though you’re thoroughly prepared. You feel...",
+                options: ["apprehensive", "jittery", "composed", "exhilarated"],
+                correct: 0,
+                feedback: {
+                    correct: "Apprehensive captures future-oriented anxiety, even when competence is present.",
+                    distractors: { "jittery": "Too informal/superficial for C1 academic/professional contexts.", "composed": "Contradicts physiological stress signs.", "exhilarated": "Implies excitement, not tension." }
+                },
+                usage: "Often used with: about/to deliver/speak. Distinguishes from clinical anxiety.",
+                note: "C1 Focus: Anticipatory vs. reactive emotions"
+            },
+            {
+                id: 5,
+                scenario: "A friend repeatedly cancels plans last minute with vague excuses. You’ve decided to distance yourself, feeling a quiet but firm...",
+                options: ["disillusionment", "resentment", "detachment", "indifference"],
+                correct: 0,
+                feedback: {
+                    correct: "Disillusionment reflects the loss of idealization after repeated disappointment.",
+                    distractors: { "resentment": "Implies ongoing anger or desire for retaliation.", "detachment/indifference": "Lack emotional weight of broken trust; suggest apathy, not evaluation." }
+                },
+                usage: "Common with: profound/deep/growing disillusionment with/about. Psychological maturity marker.",
+                note: "C1 Focus: Cognitive-emotional overlap"
+            },
+            {
+                id: 6,
+                scenario: "After a grueling week of crisis management, your team stabilizes the situation. The immediate relief is replaced by a profound sense of...",
+                options: ["exhaustion", "catharsis", "vindication", "complacency"],
+                correct: 1,
+                feedback: {
+                    correct: "Catharsis describes the emotional release following prolonged tension or trauma.",
+                    distractors: { "exhaustion": "Physical/mental state, not an emotional shift.", "vindication": "Requires prior doubt or criticism.", "complacency": "Implies overconfidence or neglect." }
+                },
+                usage: "Often follows: tension/grief/stress. Used in psychology, literature, and professional debriefs.",
+                note: "C1 Focus: Emotional release vs. fatigue"
+            },
+            {
+                id: 7,
+                scenario: "You receive unexpected praise from a notoriously critical mentor. Instead of pride, you feel a sudden, disorienting...",
+                options: ["incredulity", "humility", "complacency", "smugness"],
+                correct: 0,
+                feedback: {
+                    correct: "Incredulity captures the cognitive-emotional clash when reality defies expectations.",
+                    distractors: { "humility": "Would follow acceptance, not precede it.", "complacency/smugness": "Contradict 'disorienting' and imply overconfidence." }
+                },
+                usage: "Collocates with: utter/sheer/disbelieving incredulity. Highlights expectation mismatch.",
+                note: "C1 Focus: Cognitive disruption as emotion"
+            },
+            {
+                id: 8,
+                scenario: "Watching a documentary about climate displacement, you feel overwhelmed by the scale of suffering, yet paralyzed about how to help. This state is best described as...",
+                options: ["empathetic distress", "compassionate fatigue", "moral injury", "vicarious trauma"],
+                correct: 0,
+                feedback: {
+                    correct: "Empathetic distress is overwhelm from absorbing others' pain without clear action pathways.",
+                    distractors: { "compassionate fatigue": "Applies to long-term caregivers/professionals.", "moral injury": "Involves violating one’s own ethics.", "vicarious trauma": "Clinical, prolonged psychological shift." }
+                },
+                usage: "Academic/clinical term, increasingly common in C1 media literacy & ethics discussions.",
+                note: "C1 Focus: Precise psychological terminology"
+            },
+            {
+                id: 9,
+                scenario: "After passionately defending a position, a junior colleague presents irrefutable evidence that contradicts you. In front of peers, you feel a sharp, fleeting sense of...",
+                options: ["chagrin", "indignation", "mortification", "bewilderment"],
+                correct: 2,
+                feedback: {
+                    correct: "Mortification captures intense, public-facing shame or embarrassment.",
+                    distractors: { "chagrin": "Milder, private annoyance.", "indignation": "Righteous anger, not self-directed.", "bewilderment": "Confusion, not social discomfort." }
+                },
+                usage: "Often with: utter/deep/profound mortification. High-register, formal/literary.",
+                note: "C1 Focus: Social emotion & register"
+            },
+            {
+                id: 10,
+                scenario: "Your startup fails after two years of relentless effort. Investors pull out. Months later, you look back not with bitterness, but with a clear-eyed...",
+                options: ["equanimity", "resignation", "melancholy", "detachment"],
+                correct: 0,
+                feedback: {
+                    correct: "Equanimity denotes calm composure and emotional balance after upheaval.",
+                    distractors: { "resignation": "Passive acceptance, often with defeat.", "melancholy": "Lingering sadness.", "detachment": "Emotional disengagement, not mindful balance." }
+                },
+                usage: "Philosophical & psychological register. Common in leadership & resilience discourse.",
+                note: "C1 Focus: Emotional regulation & maturity"
+            },
+            {
+                id: 11,
+                scenario: "After a spontaneous road trip with old friends, you drive home in silence, replaying the laughter. You feel a warm, lingering...",
+                options: ["fondness", "nostalgia", "wistfulness", "contentment"],
+                correct: 3,
+                feedback: {
+                    correct: "Contentment reflects peaceful satisfaction with a recently completed positive experience.",
+                    distractors: { "fondness": "Directed at people/objects, not a situational state.", "nostalgia/wistfulness": "Imply longing for the past, not present-afterglow." }
+                },
+                usage: "Often with: quiet/deep/lasting contentment. Contrasts with euphoria (high intensity).",
+                note: "C1 Focus: Positive low-arousal emotions"
+            },
+            {
+                id: 12,
+                scenario: "You witness a stranger help an elderly person cross a busy street without hesitation or expectation of reward. The act leaves you with a quiet sense of...",
+                options: ["admiration", "reverence", "moral elevation", "benign envy"],
+                correct: 2,
+                feedback: {
+                    correct: "Moral elevation is the uplifted feeling after witnessing unexpected virtue or kindness.",
+                    distractors: { "admiration": "Cognitive/affective, but less specific to ethical uplift.", "reverence": "Implies sacredness or awe of authority.", "benign envy": "Desiring what someone else has." }
+                },
+                usage: "Positive psychology term. Gaining traction in C1 academic writing on ethics & media.",
+                note: "C1 Focus: Specialized emotion vocabulary"
+            },
+            {
+                id: 13,
+                scenario: "Your manuscript is rejected by three publishers. The fourth accepts it but demands heavy revisions. You feel a pragmatic...",
+                options: ["resignation", "acceptance", "relief", "optimism"],
+                correct: 1,
+                feedback: {
+                    correct: "Acceptance implies emotional reconciliation with reality without surrendering agency.",
+                    distractors: { "resignation": "Passive, defeatist tone.", "relief": "Ignores the revision burden.", "optimism": "Too forward-looking; misses the present reconciliation." }
+                },
+                usage: "Key concept in CBT & professional development. Collocates with: grudging/calm/pragmatic.",
+                note: "C1 Focus: Emotional agency vs. passivity"
+            },
+            {
+                id: 14,
+                scenario: "After years of meticulous planning, your event is canceled due to a sudden storm. You don’t panic—you just feel a hollow...",
+                options: ["numbness", "despair", "apathy", "anticlimax"],
+                correct: 0,
+                feedback: {
+                    correct: "Numbness describes emotional shutdown following sudden, high-stakes disappointment.",
+                    distractors: { "despair": "Active hopelessness, not hollow stillness.", "apathy": "Lack of interest, contradicts 'meticulous planning'.", "anticlimax": "Refers to the event's outcome, not the internal state." }
+                },
+                usage: "Common in narrative & psychological description. Often precedes processing/grief.",
+                note: "C1 Focus: Absence of emotion as emotion"
+            },
+            {
+                id: 15,
+                scenario: "You finally confront a long-standing family grievance. The conversation is difficult, but afterward, you feel a profound lightness, as if a weight has lifted. This is...",
+                options: ["catharsis", "vindication", "relief", "absolution"],
+                correct: 2,
+                feedback: {
+                    correct: "Relief captures the immediate emotional unburdening after tension resolution.",
+                    distractors: { "catharsis": "Stronger, often implies emotional purge/tears.", "vindication": "Requires being proven right.", "absolution": "Religious/formal forgiveness, not internal feeling." }
+                },
+                usage: "Collocates with: immense/profound/sense of relief. High frequency in C1 spoken/written English.",
+                note: "C1 Focus: Near-synonym discrimination"
+            }
+        ];
+
+        // ================= STATE & LOGIC =================
+        let currentScenarios = [];
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+        let recapData = [];
+
+        const gameArea = document.getElementById('gameArea');
+        const summaryScreen = document.getElementById('summaryScreen');
+        const scenarioText = document.getElementById('scenarioText');
+        const optionsGrid = document.getElementById('optionsGrid');
+        const feedbackPanel = document.getElementById('feedbackPanel');
+        const feedbackTitle = document.getElementById('feedbackTitle');
+        const feedbackText = document.getElementById('feedbackText');
+        const usageTip = document.getElementById('usageTip');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function init() {
+            currentScenarios = shuffleArray(scenarioBank);
+            currentIndex = 0;
+            score = 0;
+            recapData = [];
+            gameArea.style.display = 'block';
+            summaryScreen.style.display = 'none';
+            updateProgress();
+            renderScenario();
+        }
+
+        function updateProgress() {
+            const percent = ((currentIndex) / currentScenarios.length) * 100;
+            progressBar.style.width = `${percent}%`;
+        }
+
+        function renderScenario() {
+            answered = false;
+            const s = currentScenarios[currentIndex];
+            scenarioText.textContent = s.scenario;
+            optionsGrid.innerHTML = '';
+            feedbackPanel.style.display = 'none';
+            nextBtn.disabled = true;
+            nextBtn.textContent = currentIndex === currentScenarios.length - 1 ? 'View Results' : 'Next Scenario →';
+
+            s.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleSelection(i, btn);
+                optionsGrid.appendChild(btn);
+            });
+            updateProgress();
+        }
+
+        function handleSelection(selectedIndex, btn) {
+            if (answered) return;
+            answered = true;
+
+            const s = currentScenarios[currentIndex];
+            const isCorrect = selectedIndex === s.correct;
+            const buttons = optionsGrid.querySelectorAll('.option-btn');
+
+            // Visual feedback
+            buttons.forEach((b, i) => {
+                b.disabled = true;
+                if (i === s.correct) b.classList.add('correct');
+                if (i === selectedIndex && !isCorrect) b.classList.add('incorrect');
+            });
+            btn.classList.add('selected');
+
+            if (isCorrect) score++;
+
+            // Feedback content
+            const correctWord = s.options[s.correct];
+            const selectedWord = s.options[selectedIndex];
+            
+            feedbackTitle.textContent = isCorrect ? '✅ Well reasoned.' : '❌ Close, but let\'s clarify.';
+            feedbackPanel.className = `feedback-panel feedback-${isCorrect ? 'correct' : 'incorrect'}`;
+            
+            let distractorText = '';
+            Object.entries(s.feedback.distractors).forEach(([word, reason]) => {
+                if (word !== correctWord) distractorText += `<br>• <strong>${word}:</strong> ${reason}`;
+            });
+
+            feedbackText.innerHTML = `
+                <strong>Why "${correctWord}" fits:</strong> ${s.feedback.correct}
+                ${!isCorrect ? `<br><br><em>You chose "${selectedWord}".</em>` : ''}
+                <br><br><strong>Why others don't:</strong> ${distractorText}
+            `;
+            usageTip.innerHTML = `<strong>💡 Usage Tip:</strong> ${s.usage}<br><br><em>Note: ${s.note}</em>`;
+            
+            feedbackPanel.style.display = 'block';
+            nextBtn.disabled = false;
+
+            // Save for recap
+            recapData.push({
+                word: correctWord,
+                definition: s.feedback.correct,
+                context: s.scenario
+            });
+        }
+
+        nextBtn.onclick = () => {
+            currentIndex++;
+            if (currentIndex < currentScenarios.length) {
+                renderScenario();
+            } else {
+                showSummary();
+            }
+        };
+
+        function showSummary() {
+            gameArea.style.display = 'none';
+            summaryScreen.style.display = 'block';
+            document.getElementById('finalScore').textContent = `${score} / ${currentScenarios.length}`;
+            
+            const pct = (score / currentScenarios.length) * 100;
+            let msg = '';
+            if (pct === 100) msg = "Outstanding. Your nuanced understanding of emotional register is C2-ready.";
+            else if (pct >= 80) msg = "Excellent grasp of contextual nuance. Review the distractors to fine-tune precision.";
+            else if (pct >= 60) msg = "Solid foundation. Focus on connotation and collocation to reach advanced proficiency.";
+            else msg = "Good practice area. Review the vocabulary recap below and retry to build automaticity.";
+            document.getElementById('scoreMessage').textContent = msg;
+
+            const vocabList = document.getElementById('vocabList');
+            vocabList.innerHTML = recapData.map(d => `
+                <div class="vocab-item">
+                    <div class="vocab-word">${d.word}</div>
+                    <div class="vocab-def">${d.definition}</div>
+                    <div style="font-size:0.85rem; color:#888; margin-top:4px;">Context: "${d.context.substring(0, 80)}..."</div>
+                </div>
+            `).join('');
+        }
+
+        function resetActivity() {
+            init();
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
