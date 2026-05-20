@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Studio: Music & The Brain</title>
+    <style>
+        :root {
+            --bg-dark: #121214;
+            --card-bg: #1e1e24;
+            --accent-blue: #4a90e2;
+            --text-main: #f0f3f5;
+            --text-muted: #a0aec0;
+            
+            /* Brain Lobe Colors based on text definitions */
+            --frontal: #9b5de5;
+            --temporal: #00bbf9;
+            --parietal: #00f5d4;
+            --occipital: #f15bb5;
+            --cerebellum: #fee440;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+
+        header h1 {
+            color: var(--text-main);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Interactive Map Area */
+        .map-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .brain-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .lobe-btn {
+            background: none;
+            border: 2px solid var(--text-muted);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .lobe-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Specific Lobe Button Focus Styles */
+        .lobe-btn[data-lobe="frontal"] { border-color: var(--frontal); }
+        .lobe-btn[data-lobe="frontal"].active { background-color: var(--frontal); color: #000; }
+        
+        .lobe-btn[data-lobe="temporal"] { border-color: var(--temporal); }
+        .lobe-btn[data-lobe="temporal"].active { background-color: var(--temporal); color: #000; }
+        
+        .lobe-btn[data-lobe="parietal"] { border-color: var(--parietal); }
+        .lobe-btn[data-lobe="parietal"].active { background-color: var(--parietal); color: #000; }
+        
+        .lobe-btn[data-lobe="occipital"] { border-color: var(--occipital); }
+        .lobe-btn[data-lobe="occipital"].active { background-color: var(--occipital); color: #000; }
+
+        .lobe-btn[data-lobe="cerebellum"] { border-color: var(--cerebellum); }
+        .lobe-btn[data-lobe="cerebellum"].active { background-color: var(--cerebellum); color: #000; }
+
+        /* Dynamic Info Area */
+        .info-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 350px;
+        }
+
+        .info-header h2 {
+            margin-top: 0;
+            color: var(--accent-blue);
+            font-size: 1.6rem;
+        }
+
+        .info-body {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .vocab-box {
+            background-color: rgba(255,255,255,0.04);
+            border-left: 4px solid var(--accent-blue);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 15px;
+        }
+
+        .vocab-box code {
+            color: #ffca28;
+            font-size: 1rem;
+        }
+
+        .task-box {
+            background-color: rgba(74, 144, 226, 0.1);
+            border: 1px dashed var(--accent-blue);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .task-title {
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mapping Sound: How Music Changes the Brain</h1>
+        <p>Click on the different control systems of the brain to explore how they respond to rhythms, instruments, and familiar melodies.</p>
+    </header>
+
+    <div class="container">
+        <div class="map-card">
+            <h3 style="margin-top:0; width:100%; text-align:left;">Select a Brain Region:</h3>
+            <div class="brain-grid">
+                <button class="lobe-btn active" data-lobe="frontal">Frontal Lobe <br><small>(Prefrontal & Motor)</small></button>
+                <button class="lobe-btn" data-lobe="temporal">Temporal Lobe <br><small>(Auditory & Memory)</small></button>
+                <button class="lobe-btn" data-lobe="parietal">Parietal Lobe <br><small>(Sensory Cortex)</small></button>
+                <button class="lobe-btn" data-lobe="occipital">Occipital Lobe <br><small>(Visual Cortex)</small></button>
+                <button class="lobe-btn" style="grid-column: span 2;" data-lobe="cerebellum">Cerebellum <br><small>(Rhythm & Timing Circuits)</small></button>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div id="display-content">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const lobeData = {
+            frontal: {
+                title: "The Frontal Lobe & Motor Systems",
+                description: "This area handles planning, emotion link, and physical control. The <b>Motor Cortex</b> inside this lobe controls your physical movements when you play an instrument or dance.",
+                vocab: "<b>Key Verbs:</b> <code>To tap</code>, <code>To dance</code>, <code>To plan</code>, <code>To self-reflect</code>",
+                task: "Think of your absolute favorite high-energy song. Does your frontal lobe immediately make you want to tap your feet or start moving?"
+            },
+            temporal: {
+                title: "The Temporal Lobe & Memory Systems",
+                description: "This handles your hearing and houses the deep memory centers. The <b>Auditory Cortex</b> manages the initial phases of sound processing, while structures like the <b>Hippocampus</b> and <b>Amygdala</b> handle your emotional memories and help you follow along with familiar music.",
+                vocab: "<b>Useful Expressions:</b> <code>Evocative</code>, <code>Nostalgic</code>, <code>To bring back memories</code>, <code>To recognize a tune</code>",
+                task: "Is there a specific track or genre that instantly reminds you of your childhood or your teenage years?"
+            },
+            parietal: {
+                title: "The Parietal Lobe & Sensory Feedback",
+                description: "This manages spatial awareness and motor response coordination. Crucially, the <b>Sensory Cortex</b> processes tactile feedback—the literal sensation of touch and pressure your skin feels when pressing down on piano keys, violin blocks, or thick guitar strings.",
+                vocab: "<b>Descriptive Adjectives:</b> <code>Acoustic</code>, <code>Resonant</code>, <code>Velvety</code>, <code>Raw texture</code>",
+                task: "Imagine playing a stringed instrument versus a plastic electronic keyboard. How would the tactile sensation differ?"
+            },
+            occipital: {
+                title: "The Occipital Lobe & Visual Systems",
+                description: "Though music is an auditory medium, your occipital lobe runs the <b>Visual Cortex</b>. This is activated heavily when a musician is actively reading complex musical sheet notation or intently observing a live performer's physical body language.",
+                vocab: "<b>Visual Terms:</b> <code>Musical notation</code>, <code>To observe</code>, <code>Performance cues</code>",
+                task: "When watching a live music video, do you focus more on listening to the melody or observing the performer's look and movements?"
+            },
+            cerebellum: {
+                title: "The Cerebellum & Timing Circuits",
+                description: "Located at the base of your brain, the cerebellum acts as your master internal clock. It contains precise timing circuits that constantly monitor changes in tempo and pace, regulating subconscious balance and rhythmic tracking.",
+                vocab: "<b>Structural Rhythms:</b> <code>Tempo</code>, <code>Fast-paced</code>, <code>Subdued speed</code>, <code>Syncopated beat</code>",
+                task: "Can you easily clap along cleanly to a highly complex jazz solo, or does your internal timing circuit prefer a steady, simple pop beat?"
+            }
+        };
+
+        const buttons = document.querySelectorAll('.lobe-btn');
+        const displayContainer = document.getElementById('display-content');
+
+        function updatePanel(lobeKey) {
+            const data = lobeData[lobeKey];
+            displayContainer.innerHTML = `
+                <div class="info-header">
+                    <h2>${data.title}</h2>
+                </div>
+                <div class="info-body">
+                    <p>${data.description}</p>
+                    <div class="vocab-box">
+                        ${data.vocab}
+                    </div>
+                    <div class="task-box">
+                        <div class="task-title">💡 Discussion Question:</div>
+                        <p style="margin: 5px 0 0 0; color: var(--text-muted); font-size: 0.95rem;">${data.task}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize display
+        updatePanel('frontal');
+
+        // Handle interactions
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                updatePanel(btn.getAttribute('data-lobe'));
+            });
+        });
+    </script>
+</body>
+</html>
